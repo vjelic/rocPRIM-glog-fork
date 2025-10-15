@@ -12,10 +12,10 @@
           "informationUri": "https://www.glog.ai",
           "rules": [
             {
-              "id": "83b69826-ea02-3b85-ae31-d6ba27112b36",
+              "id": "c56785d5-3f2f-3743-a9c6-cd8f75d960da",
               "help": {
                 "text": "",
-                "markdown": "This finding is classified as a genuine vulnerability because the analysis identified a risk of undefined behavior due to possible overlap between the source and destination memory regions in the memory copy operation. The destination and source may refer to overlapping memory, as indicated by the dataflow analysis. Additionally, the source pointer may be null, which could also lead to undefined behavior. There are no explicit checks or guards in the code to prevent these issues. The classification and verdict both indicate a high-confidence, actionable issue that should be addressed to prevent potential memory corruption or crashes.\n\n## In Context Remediation\nTo prevent undefined behavior when copying memory, ensure that the source and destination memory regions do not overlap. If there is any possibility of overlap, use `memmove` instead of `memcpy`, as `memmove` is designed to handle overlapping regions safely. For example, replace the original call with:\n\n```cpp\nmemmove(&prefix, &p, sizeof(prefix_type));\n```\n\nAdditionally, ensure that both the source and destination pointers are valid and not null before performing the copy. You can add checks like:\n\n```cpp\nif (&prefix != nullptr && &p != nullptr) {\n    memmove(&prefix, &p, sizeof(prefix_type));\n}\n```\n\n## References\n- [OWASP: Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)\n- [CWE-787: Out-of-bounds Write](https://cwe.mitre.org/data/definitions/787.html)\n- [CWE-124: Buffer Underwrite ('Buffer Underflow')](https://cwe.mitre.org/data/definitions/124.html)\n- [C-Based Toolchain Hardening Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n\n___\n"
+                "markdown": "This finding is classified as a genuine vulnerability because the analysis detected a risk of undefined behavior due to possible overlap between the source and destination memory regions in the memory copy operation. The destination and source may refer to overlapping memory, as indicated by the dataflow analysis. Additionally, the source pointer may be null in some cases, which further increases the risk of undefined behavior. There are no explicit checks or guards in the code to prevent these issues. The classification and verdict both indicate a high-confidence, actionable issue that should be addressed to prevent potential memory corruption or crashes.\n\n## In Context Remediation\nTo prevent undefined behavior when copying memory between potentially overlapping regions, use a function that is safe for overlapping memory, such as `memmove`, instead of `memcpy`. `memmove` is specifically designed to handle overlapping source and destination regions safely.\n\n```cpp\nmemmove(&p, &prefix, sizeof(prefix_type));\n```\n\nThis change ensures that the memory copy will not result in undefined behavior even if the source and destination overlap.\n\n## References\n- [OWASP: Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)\n- [CWE-787: Out-of-bounds Write](https://cwe.mitre.org/data/definitions/787.html)\n\n\n___\n"
               },
               "properties": {
                 "tags": [
@@ -24,10 +24,10 @@
               }
             },
             {
-              "id": "c56785d5-3f2f-3743-a9c6-cd8f75d960da",
+              "id": "83b69826-ea02-3b85-ae31-d6ba27112b36",
               "help": {
                 "text": "",
-                "markdown": "This finding is considered a genuine vulnerability because the classification indicates a risk of undefined behavior due to possible overlap between the source and destination memory regions in the memory copy operation. The analysis detected that the destination and source may overlap based on data flow, which can cause undefined behavior with functions like memcpy. Additionally, the source may be null at this call site, which further increases the risk. There are no explicit guards or checks to prevent these issues, and the verdict for this call site is marked as genuine. The combination of possible overlap and potential null source makes this a high-confidence, actionable issue.\n\n## In Context Remediation\nTo prevent undefined behavior when copying memory between potentially overlapping regions, use `memmove` instead of `memcpy`. `memmove` is designed to handle overlapping memory safely. Replace the original call with:\n\n```cpp\nmemmove(&p, &prefix, sizeof(prefix_type));\n```\n\nThis change ensures that the copy operation is safe even if the source and destination overlap. Also, ensure that neither the source nor the destination is null before performing the operation to avoid null pointer dereference.\n\n## References\n- [OWASP C-Based Toolchain Hardening Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)\n- [CWE-787: Out-of-bounds Write](https://cwe.mitre.org/data/definitions/787.html)\n- [OWASP Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n\n___\n"
+                "markdown": "This finding is classified as a genuine vulnerability because the analysis identified a risk of undefined behavior due to possible overlap between the source and destination memory regions in the memory copy operation. The destination and source may refer to overlapping memory, as indicated by the dataflow analysis. Additionally, the source pointer may be null, which could also lead to undefined behavior. There are no explicit checks or guards in place to prevent these issues. The classification and verdict both indicate a high-confidence, actionable issue that should be addressed to prevent potential memory corruption or crashes.\n\n## In Context Remediation\nTo prevent undefined behavior when copying memory between potentially overlapping regions, use `memmove` instead of `memcpy`. `memmove` is designed to handle overlapping memory safely, whereas `memcpy` is not. Replace the original call with:\n\n```cpp\nmemmove(&prefix, &p, sizeof(prefix_type));\n```\n\nThis change ensures that the copy operation is safe even if the source and destination overlap.\n\n## References\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)\n- [CWE-787: Out-of-bounds Write](https://cwe.mitre.org/data/definitions/787.html)\n- [OWASP Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n\n\n___\n"
               },
               "properties": {
                 "tags": [
@@ -39,7 +39,7 @@
               "id": "3273dc29-bfe9-36a3-a36e-0b7aad3894a0",
               "help": {
                 "text": "",
-                "markdown": "This finding is classified as a genuine vulnerability because the analysis identified a risk of undefined behavior due to possible overlap between the source and destination memory regions in the memory copy operation. The verdict is supported by the classification indicating undefined behavior risk and the explicit 'GENUINE' verdict. The analysis determined that the source and destination may overlap based on data flow, which can cause undefined behavior with functions like memcpy. Additionally, the source may be null at this call site, further increasing the risk. There are no explicit guards or checks to prevent these issues, and the destination is not a pointer-based member, making it likely a local variable or field array. These factors all contribute to a high confidence that this is a real issue that needs remediation.\n\n## In Context Remediation\nTo prevent undefined behavior when copying memory between potentially overlapping regions, use a function that is safe for overlapping memory, such as `memmove`, instead of `memcpy`. `memmove` is specifically designed to handle overlapping source and destination regions safely.\n\n```cpp\nmemmove(&prefix, &p, sizeof(prefix_type));\n```\n\nThis change ensures that the copy operation is well-defined even if the source and destination overlap.\n\n## References\n- [OWASP C-Based Toolchain Hardening Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)\n- [CWE-787: Out-of-bounds Write](https://cwe.mitre.org/data/definitions/787.html)\n- [OWASP Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n\n___\n"
+                "markdown": "This finding is classified as a genuine vulnerability because the analysis identified a risk of undefined behavior due to possible overlap between the source and destination memory regions in the memory copy operation. The verdict is marked as 'GENUINE', and the classification explicitly states a risk of undefined behavior. The analysis determined that the source and destination may overlap based on data flow, which can cause issues with memcpy, as it does not support overlapping regions. Additionally, the source may be null, which further increases the risk. There are no explicit guards or checks to prevent these issues, and the destination is not a pointer-based member, making it likely a local variable or field array. These factors indicate a real risk of memory corruption or program instability.\n\n## In Context Remediation\nTo prevent undefined behavior when copying memory between regions that may overlap, use `memmove` instead of `memcpy`. `memmove` is designed to handle overlapping memory safely. Replace the original call with:\n\n```cpp\nmemmove(&prefix, &p, sizeof(prefix_type));\n```\n\nThis change ensures that the copy operation is safe even if the source and destination regions overlap.\n\n## References\n- [OWASP: Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)\n- [CWE-787: Out-of-bounds Write](https://cwe.mitre.org/data/definitions/787.html)\n\n\n___\n"
               },
               "properties": {
                 "tags": [
@@ -48,22 +48,10 @@
               }
             },
             {
-              "id": "8fc35cd6-269b-3f09-975b-bd0875ca70d3",
-              "help": {
-                "text": "",
-                "markdown": "## Description\n\nIn C++ programming, the vulnerability \"Avoid Using Non-Cryptographic or Weak Random Number Generators\" refers to the use of random number generators that are not cryptographically secure. This can lead to predictable randomness which can be exploited by an attacker to predict the outcome of the random number generator, leading to a breach of security.\n\nIn the given code snippet, `std::shuffle` is used with a random number generator `rng`. If `rng` is not a cryptographically secure random number generator, it can lead to this vulnerability.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, use a cryptographically secure random number generator. In C++, this can be achieved using the `<random>` library which provides `std::random_device`, a non-deterministic random number generator. \n\n## Source Code Fix Recommendation\n\nHere is a fixed version of the code:\n\n```cpp\n#include <random>\n#include <algorithm>\n#include <vector>\n\nstd::vector<int> permute;\nstd::random_device rd;\nstd::mt19937 g(rd());\n\nstd::shuffle(permute.begin(), permute.end(), g);\n```\n\nIn this code, `std::random_device` is used to seed the Mersenne Twister engine `std::mt19937`, which is a cryptographically secure random number generator. This generator is then used with `std::shuffle`.\n\n## Library Dependencies\n\nThe code requires the following library dependencies:\n\n- `<random>`: For `std::random_device` and `std::mt19937`.\n- `<algorithm>`: For `std::shuffle`.\n- `<vector>`: For `std::vector`.\n\n## References\n\n- [CWE-338: Use of Cryptographically Weak PRNG](https://cwe.mitre.org/data/definitions/338.html)"
-              },
-              "properties": {
-                "tags": [
-                  "DS148264"
-                ]
-              }
-            },
-            {
               "id": "bdab7244-45ca-3826-8cf3-77924136b611",
               "help": {
                 "text": "",
-                "markdown": "This finding is considered a genuine vulnerability because the classification indicates a risk of undefined behavior due to possible overlap between the source and destination memory regions in the memory copy operation. The analysis detected that the source and destination may overlap based on data flow, which can cause undefined behavior with functions like memcpy. Additionally, the source may be null at this call site, which further increases the risk. There are no explicit guards or checks to prevent these issues, and the verdict is marked as genuine. The destination is not likely to be null, but the overlap and possible null source make this a high-confidence issue that should be addressed.\n\n## In Context Remediation\nTo prevent undefined behavior when copying memory between potentially overlapping regions, use `memmove` instead of `memcpy`. `memmove` is designed to handle overlapping memory safely. Replace the original call with:\n\n```cpp\nmemmove(&prefix, &p, sizeof(prefix_type));\n```\n\nThis change ensures that the copy operation is safe even if the source and destination overlap. Also, consider adding checks to ensure that the source pointer is not null before performing the copy to avoid null pointer dereference.\n\n## References\n- [OWASP C-Based Toolchain Hardening Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)\n- [CWE-787: Out-of-bounds Write](https://cwe.mitre.org/data/definitions/787.html)\n- [OWASP Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n\n___\n"
+                "markdown": "This finding is classified as a genuine vulnerability because the analysis identified a risk of undefined behavior due to possible overlap between the source and destination memory regions in the memory copy operation. The verdict is supported by the classification indicating undefined behavior risk and the explicit 'GENUINE' verdict. The analysis determined that the source and destination may overlap based on data flow, which can cause unpredictable results with memory copy functions that do not support overlapping regions. Additionally, the analysis could not rule out the possibility that the source pointer may be null, further increasing the risk. There are no explicit checks or guards in the code to prevent these issues, and the destination is not confirmed to be a pointer-based member, suggesting it is likely a local variable or field. These factors all contribute to the assessment that this is a real and actionable issue.\n\n## In Context Remediation\nTo prevent undefined behavior when copying memory between regions that may overlap, use a function that is safe for overlapping memory, such as `memmove`, instead of `memcpy`. This ensures that the copy operation is performed correctly even if the source and destination regions overlap.\n\n**Remediation example:**\n\n```cpp\nmemmove(&prefix, &p, sizeof(prefix_type));\n```\n\nThis change will safely handle any potential overlap between `prefix` and `p`.\n\n## References\n- [OWASP: Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)\n- [CWE-787: Out-of-bounds Write](https://cwe.mitre.org/data/definitions/787.html)\n\n\n___\n"
               },
               "properties": {
                 "tags": [
@@ -75,7 +63,7 @@
               "id": "6cd4dcc1-79ca-3443-98ca-717d5a518ff3",
               "help": {
                 "text": "",
-                "markdown": "This finding is considered a genuine vulnerability because the classification indicates a risk of undefined behavior due to possible overlap between the source and destination memory regions in the memory copy operation. The analysis detected that the source and destination may overlap based on data flow, which can cause undefined behavior with functions like memcpy. Additionally, the source may be null at this call site, which further increases the risk. There are no explicit guards or checks to prevent these issues, and the verdict for this call site is marked as genuine. The destination is not likely to be null, but the overlap and possible null source make this a high-confidence issue that should be addressed.\n\n## In Context Remediation\nTo prevent undefined behavior when copying memory between potentially overlapping regions, use `memmove` instead of `memcpy`. `memmove` is designed to handle overlapping memory safely. Replace the original call with:\n\n```cpp\nmemmove(&p, &prefix, sizeof(prefix_type));\n```\n\nThis change ensures that the copy operation is safe even if the source and destination overlap. Also, consider adding checks to ensure that neither the source nor the destination is null before performing the operation.\n\n## References\n- [OWASP C-Based Toolchain Hardening Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n- [CWE-787: Out-of-bounds Write](https://cwe.mitre.org/data/definitions/787.html)\n- [OWASP Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n\n___\n"
+                "markdown": "This finding is classified as a genuine vulnerability because it is marked as a 'UB Risk' (undefined behavior risk) due to possible overlap between the source and destination memory regions in the memory copy operation. The analysis indicates that the source and destination may overlap based on data flow, which can lead to undefined behavior when using memory copy functions like memcpy. Additionally, the source may be null at this call site, which further increases the risk of undefined behavior. There are no explicit guards or checks to prevent these issues, and the function call is not protected by any length or capacity checks. The destination is not likely to be null, but the overlap and possible null source make this a high-confidence, actionable issue.\n\n## In Context Remediation\nTo prevent undefined behavior when copying memory between potentially overlapping regions, use a function that is safe for overlapping memory, such as `memmove`, instead of `memcpy`. `memmove` is specifically designed to handle overlapping source and destination regions safely.\n\n**Remediation example:**\n\n```cpp\nmemmove(&p, &prefix, sizeof(prefix_type));\n```\n\nThis change ensures that the memory copy will work correctly even if the source and destination overlap.\n\n## References\n- [OWASP C-Based Toolchain Hardening Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)\n- [CWE-787: Out-of-bounds Write](https://cwe.mitre.org/data/definitions/787.html)\n- [OWASP Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n\n___\n"
               },
               "properties": {
                 "tags": [
@@ -96,14 +84,14 @@
               }
             },
             {
-              "id": "7547c77d-97a1-3481-a417-17ca34c2e81c",
+              "id": "8fc35cd6-269b-3f09-975b-bd0875ca70d3",
               "help": {
                 "text": "",
-                "markdown": "This finding is considered a genuine vulnerability because the classification indicates a risk of undefined behavior due to possible overlap between the source and destination memory regions in the memory copy operation. The analysis detected that the source and destination may overlap based on data flow, which can cause undefined behavior with functions like memcpy. Additionally, the source may be null, which further increases the risk of undefined behavior. There are no explicit guards or checks to prevent these issues, and the function verdict confirms this as a genuine issue. Developers should be aware that using memcpy with potentially overlapping memory regions is unsafe and can lead to unpredictable program behavior.\n\n## In Context Remediation\nTo prevent undefined behavior when copying memory between regions that may overlap, replace the use of `memcpy` with `memmove`, which is designed to handle overlapping memory safely. For example, if the original code is:\n\n```cpp\nmemcpy(&p, &prefix, sizeof(prefix_type));\n```\n\nChange it to:\n\n```cpp\nmemmove(&p, &prefix, sizeof(prefix_type));\n```\n\nThis ensures that the copy operation is safe even if the source and destination memory regions overlap. Always verify that both source and destination pointers are valid and not null before performing the operation.\n\n## References\n- [OWASP C-Based Toolchain Hardening Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)\n- [CWE-787: Out-of-bounds Write](https://cwe.mitre.org/data/definitions/787.html)\n- [OWASP Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n\n___\n"
+                "markdown": "## Description\n\nIn C++ programming, the vulnerability \"Avoid Using Non-Cryptographic or Weak Random Number Generators\" refers to the use of random number generators that are not cryptographically secure. This can lead to predictable randomness which can be exploited by an attacker to predict the outcome of the random number generator, leading to a breach of security.\n\nIn the given code snippet, `std::shuffle` is used with a random number generator `rng`. If `rng` is not a cryptographically secure random number generator, it can lead to this vulnerability.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, use a cryptographically secure random number generator. In C++, this can be achieved using the `<random>` library which provides `std::random_device`, a non-deterministic random number generator. \n\n## Source Code Fix Recommendation\n\nHere is a fixed version of the code:\n\n```cpp\n#include <random>\n#include <algorithm>\n#include <vector>\n\nstd::vector<int> permute;\nstd::random_device rd;\nstd::mt19937 g(rd());\n\nstd::shuffle(permute.begin(), permute.end(), g);\n```\n\nIn this code, `std::random_device` is used to seed the Mersenne Twister engine `std::mt19937`, which is a cryptographically secure random number generator. This generator is then used with `std::shuffle`.\n\n## Library Dependencies\n\nThe code requires the following library dependencies:\n\n- `<random>`: For `std::random_device` and `std::mt19937`.\n- `<algorithm>`: For `std::shuffle`.\n- `<vector>`: For `std::vector`.\n\n## References\n\n- [CWE-338: Use of Cryptographically Weak PRNG](https://cwe.mitre.org/data/definitions/338.html)"
               },
               "properties": {
                 "tags": [
-                  "DS121708"
+                  "DS148264"
                 ]
               }
             },
@@ -132,6 +120,18 @@
               }
             },
             {
+              "id": "26deee39-0d8b-3c76-a25e-090c66e7de24",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the source is larger than the destination. In the provided code, `memcpy(&dest, &source, sizeof(Destination))`, if the size of `source` is larger than `Destination`, it can lead to buffer overflow, causing program crash or execution of malicious code.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, always ensure that the destination buffer is large enough to hold the data being copied from the source. This can be done by checking the size of the source and destination before performing the `memcpy` operation. Also, consider using safer functions like `strncpy` or `memcpy_s` which include the size of the destination as a parameter.\n\n## Source Code Fix Recommendation\n\nHere is a safer version of the code:\n\n```cpp\n#include <cstring>\n\n// Assuming Destination is a type and dest is an instance of Destination\nDestination dest;\nSource source; // Assuming Source is a type and source is an instance of Source\n\nif(sizeof(dest) >= sizeof(source)) {\n    memcpy(&dest, &source, sizeof(source));\n} else {\n    // Handle error\n}\n```\n\n## Library Dependencies\n\nThe `memcpy` function is part of the `<cstring>` library in C++. Therefore, the code example requires the `<cstring>` library to execute properly.\n\n## References\n\n- [OWASP Buffer Overflow Attack](https://owasp.org/www-community/attacks/Buffer_overflow_attack)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)"
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
               "id": "d14291fb-8809-39c2-b397-a60d822a82f7",
               "help": {
                 "text": "",
@@ -144,10 +144,10 @@
               }
             },
             {
-              "id": "26deee39-0d8b-3c76-a25e-090c66e7de24",
+              "id": "7547c77d-97a1-3481-a417-17ca34c2e81c",
               "help": {
                 "text": "",
-                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the source is larger than the destination. In the provided code, `memcpy(&dest, &source, sizeof(Destination))`, if the size of `source` is larger than `Destination`, it can lead to buffer overflow, causing program crash or execution of malicious code.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, always ensure that the destination buffer is large enough to hold the data being copied from the source. This can be done by checking the size of the source and destination before performing the `memcpy` operation. Also, consider using safer functions like `strncpy` or `memcpy_s` which include the size of the destination as a parameter.\n\n## Source Code Fix Recommendation\n\nHere is a safer version of the code:\n\n```cpp\n#include <cstring>\n\n// Assuming Destination is a type and dest is an instance of Destination\nDestination dest;\nSource source; // Assuming Source is a type and source is an instance of Source\n\nif(sizeof(dest) >= sizeof(source)) {\n    memcpy(&dest, &source, sizeof(source));\n} else {\n    // Handle error\n}\n```\n\n## Library Dependencies\n\nThe `memcpy` function is part of the `<cstring>` library in C++. Therefore, the code example requires the `<cstring>` library to execute properly.\n\n## References\n\n- [OWASP Buffer Overflow Attack](https://owasp.org/www-community/attacks/Buffer_overflow_attack)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)"
+                "markdown": "This finding is considered a genuine vulnerability because the classification indicates a risk of undefined behavior due to possible overlap between the source and destination memory regions in the memory copy operation. The analysis detected that the destination and source may overlap based on data flow, which can cause undefined behavior with functions like memcpy. Additionally, the source may be null at this call site, which further increases the risk. There are no explicit guards or checks to prevent these issues, and the verdict for this call site is marked as genuine. The destination is not likely to be null, but the overlap and possible null source are significant concerns.\n\n## In Context Remediation\nTo prevent undefined behavior when copying memory between regions that may overlap, use `memmove` instead of `memcpy`. `memmove` is designed to handle overlapping memory safely, while `memcpy` is not. Replace the original call with:\n\n```cpp\nmemmove(&p, &prefix, sizeof(prefix_type));\n```\n\nThis change ensures that even if the source and destination overlap, the operation will be performed safely and predictably.\n\n## References\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)\n- [CWE-787: Out-of-bounds Write](https://cwe.mitre.org/data/definitions/787.html)\n- [OWASP: Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n\n\n___\n"
               },
               "properties": {
                 "tags": [
@@ -178,71 +178,6 @@
       },
       "language": "en-US",
       "results": [
-        {
-          "ruleId": "83b69826-ea02-3b85-ae31-d6ba27112b36",
-          "kind": "fail",
-          "level": "note",
-          "message": {
-            "text": "Problematic C function detected (memcpy)"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "rocprim/include/rocprim/device/detail/lookback_scan_state.hpp"
-                },
-                "region": {
-                  "startLine": 285,
-                  "startColumn": 8,
-                  "endLine": 285,
-                  "endColumn": 47,
-                  "charOffset": 11152,
-                  "charLength": 39,
-                  "snippet": {
-                    "text": "memcpy(&prefix, &p, sizeof(prefix_type)",
-                    "rendered": {
-                      "text": "memcpy(&prefix, &p, sizeof(prefix_type)",
-                      "markdown": "`memcpy(&prefix, &p, sizeof(prefix_type)`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "fixes": [
-            {
-              "description": {
-                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
-              },
-              "artifactChanges": [
-                {
-                  "artifactLocation": {
-                    "uri": "rocprim/include/rocprim/device/detail/lookback_scan_state.hpp"
-                  },
-                  "replacements": [
-                    {
-                      "deletedRegion": {
-                        "charOffset": 11152,
-                        "charLength": 39
-                      },
-                      "insertedContent": {
-                        "text": "memcpy_s(&prefix, <size of &prefix>,  &p,  sizeof(prefix_type)"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "BestPractice",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.ProblematicFunction"
-            ]
-          }
-        },
         {
           "ruleId": "c56785d5-3f2f-3743-a9c6-cd8f75d960da",
           "kind": "fail",
@@ -293,6 +228,71 @@
                       },
                       "insertedContent": {
                         "text": "memcpy_s(&p, <size of &p>,  &prefix,  sizeof(prefix_type)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "83b69826-ea02-3b85-ae31-d6ba27112b36",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Problematic C function detected (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "rocprim/include/rocprim/device/detail/lookback_scan_state.hpp"
+                },
+                "region": {
+                  "startLine": 285,
+                  "startColumn": 8,
+                  "endLine": 285,
+                  "endColumn": 47,
+                  "charOffset": 11152,
+                  "charLength": 39,
+                  "snippet": {
+                    "text": "memcpy(&prefix, &p, sizeof(prefix_type)",
+                    "rendered": {
+                      "text": "memcpy(&prefix, &p, sizeof(prefix_type)",
+                      "markdown": "`memcpy(&prefix, &p, sizeof(prefix_type)`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "rocprim/include/rocprim/device/detail/lookback_scan_state.hpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 11152,
+                        "charLength": 39
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(&prefix, <size of &prefix>,  &p,  sizeof(prefix_type)"
                       }
                     }
                   ]
@@ -370,46 +370,6 @@
             "DevSkimConfidence": "High",
             "tags": [
               "API.DangerousAPI.ProblematicFunction"
-            ]
-          }
-        },
-        {
-          "ruleId": "8fc35cd6-269b-3f09-975b-bd0875ca70d3",
-          "kind": "fail",
-          "level": "error",
-          "message": {
-            "text": "Avoid Using Non-Cryptographic or Weak Random Number Generators"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "common/device_batch_memcpy.hpp"
-                },
-                "region": {
-                  "startLine": 71,
-                  "startColumn": 9,
-                  "endLine": 71,
-                  "endColumn": 17,
-                  "charOffset": 2853,
-                  "charLength": 8,
-                  "snippet": {
-                    "text": "shuffle(",
-                    "rendered": {
-                      "text": "shuffle(",
-                      "markdown": "`shuffle(`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "Important",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "Cryptography.PRNG.Weak"
             ]
           }
         },
@@ -584,30 +544,30 @@
           }
         },
         {
-          "ruleId": "7547c77d-97a1-3481-a417-17ca34c2e81c",
+          "ruleId": "8fc35cd6-269b-3f09-975b-bd0875ca70d3",
           "kind": "fail",
-          "level": "note",
+          "level": "error",
           "message": {
-            "text": "Problematic C function detected (memcpy)"
+            "text": "Avoid Using Non-Cryptographic or Weak Random Number Generators"
           },
           "locations": [
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "rocprim/include/rocprim/device/detail/lookback_scan_state.hpp"
+                  "uri": "common/device_batch_memcpy.hpp"
                 },
                 "region": {
-                  "startLine": 250,
-                  "startColumn": 12,
-                  "endLine": 250,
-                  "endColumn": 51,
-                  "charOffset": 9948,
-                  "charLength": 39,
+                  "startLine": 71,
+                  "startColumn": 9,
+                  "endLine": 71,
+                  "endColumn": 17,
+                  "charOffset": 2853,
+                  "charLength": 8,
                   "snippet": {
-                    "text": "memcpy(&p, &prefix, sizeof(prefix_type)",
+                    "text": "shuffle(",
                     "rendered": {
-                      "text": "memcpy(&p, &prefix, sizeof(prefix_type)",
-                      "markdown": "`memcpy(&p, &prefix, sizeof(prefix_type)`"
+                      "text": "shuffle(",
+                      "markdown": "`shuffle(`"
                     }
                   },
                   "sourceLanguage": "cpp"
@@ -615,36 +575,11 @@
               }
             }
           ],
-          "fixes": [
-            {
-              "description": {
-                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
-              },
-              "artifactChanges": [
-                {
-                  "artifactLocation": {
-                    "uri": "rocprim/include/rocprim/device/detail/lookback_scan_state.hpp"
-                  },
-                  "replacements": [
-                    {
-                      "deletedRegion": {
-                        "charOffset": 9948,
-                        "charLength": 39
-                      },
-                      "insertedContent": {
-                        "text": "memcpy_s(&p, <size of &p>,  &prefix,  sizeof(prefix_type)"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          ],
           "properties": {
-            "DevSkimSeverity": "BestPractice",
+            "DevSkimSeverity": "Important",
             "DevSkimConfidence": "High",
             "tags": [
-              "API.DangerousAPI.ProblematicFunction"
+              "Cryptography.PRNG.Weak"
             ]
           }
         },
@@ -729,46 +664,6 @@
           }
         },
         {
-          "ruleId": "d14291fb-8809-39c2-b397-a60d822a82f7",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Detected Prohibited C Function"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "rocprim/include/rocprim/functional.hpp"
-                },
-                "region": {
-                  "startLine": 37,
-                  "startColumn": 28,
-                  "endLine": 37,
-                  "endColumn": 34,
-                  "charOffset": 1569,
-                  "charLength": 6,
-                  "snippet": {
-                    "text": "printf",
-                    "rendered": {
-                      "text": "printf",
-                      "markdown": "`printf`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "Moderate",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.BannedFunction"
-            ]
-          }
-        },
-        {
           "ruleId": "26deee39-0d8b-3c76-a25e-090c66e7de24",
           "kind": "fail",
           "level": "note",
@@ -818,6 +713,111 @@
                       },
                       "insertedContent": {
                         "text": "memcpy_s(&dest, <size of &dest>,  &source,  sizeof(Destination)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "d14291fb-8809-39c2-b397-a60d822a82f7",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Detected Prohibited C Function"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "rocprim/include/rocprim/functional.hpp"
+                },
+                "region": {
+                  "startLine": 37,
+                  "startColumn": 28,
+                  "endLine": 37,
+                  "endColumn": 34,
+                  "charOffset": 1569,
+                  "charLength": 6,
+                  "snippet": {
+                    "text": "printf",
+                    "rendered": {
+                      "text": "printf",
+                      "markdown": "`printf`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "Moderate",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.BannedFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "7547c77d-97a1-3481-a417-17ca34c2e81c",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Problematic C function detected (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "rocprim/include/rocprim/device/detail/lookback_scan_state.hpp"
+                },
+                "region": {
+                  "startLine": 250,
+                  "startColumn": 12,
+                  "endLine": 250,
+                  "endColumn": 51,
+                  "charOffset": 9948,
+                  "charLength": 39,
+                  "snippet": {
+                    "text": "memcpy(&p, &prefix, sizeof(prefix_type)",
+                    "rendered": {
+                      "text": "memcpy(&p, &prefix, sizeof(prefix_type)",
+                      "markdown": "`memcpy(&p, &prefix, sizeof(prefix_type)`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "rocprim/include/rocprim/device/detail/lookback_scan_state.hpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 9948,
+                        "charLength": 39
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(&p, <size of &p>,  &prefix,  sizeof(prefix_type)"
                       }
                     }
                   ]
